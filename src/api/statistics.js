@@ -14,3 +14,21 @@ export function getSalePersonData(params) {
     params
   })
 }
+
+// 产品销量
+export function getSalesForProducts(params) {
+  return request({
+    url: '/back/statistics/sales/products',
+    method: 'get',
+    params
+  })
+}
+
+// 时间段销量统计
+export function getSalesForTimeSlot(params) {
+  return request({
+    url: '/back/statistics/sales/date',
+    method: 'get',
+    params
+  })
+}

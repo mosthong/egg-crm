@@ -1,46 +1,48 @@
 <template>
   <div class="app-container visualization" :style="{ background: 'url(' + require('@/assets/bg5.png') + ') no-repeat center center', backgroundSize: 'cover' }">
-    <!-- 筛选查询 -->
-    <!-- <div class="header">
-      <el-form :inline="true" :model="searchForm" class="demo-form-inline">
-        <el-form-item label="时间范围">
-          <el-date-picker v-model="searchForm.date" @change="datetimeChange" value-format="yyyy-MM-dd HH:mm:ss" :default-time="['00:00:00', '23:59:59']" type="datetimerange" :picker-options="pickerOptions" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right"></el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="search">查询</el-button>
-        </el-form-item>
-      </el-form>
-    </div> -->
+    <div class="header">
+      <h1>订单大数据</h1>
+      <svg width="1594" height="100">
+        <polyline fill="transparent" stroke-width="3" points="0,20 286.92,20 318.8,40 398.5,40 430.38000000000005,60 1147.68,60 1195.5,40 1275.2,40 1307.08,20 1594,20" stroke="#00CED1">
+          <animate attributeName="stroke-dasharray" attributeType="XML" from="0, 807.6382739015977, 0, 807.6382739015977" to="0, 0, 1615.2765478031954, 0" dur="3s" begin="0s" calcMode="spline" keyTimes="0;1" keySplines="0.4,1,0.49,0.98" repeatCount="indefinite"></animate>
+        </polyline>
+        <polyline fill="transparent" stroke-width="2" points="478.2,80 1115.8,80" stroke="#FAD400">
+          <animate attributeName="stroke-dasharray" attributeType="XML" from="0, 318.79999999999995, 0, 318.79999999999995" to="0, 0, 637.5999999999999, 0" dur="3s" begin="0s" calcMode="spline" keyTimes="0;1" keySplines=".4,1,.49,.98" repeatCount="indefinite"></animate>
+        </polyline>
+      </svg>
+    </div>
     <!-- 列表 -->
     <div class="content">
       <el-row :gutter="20">
         <!-- 左 -->
         <el-col class="row-content" :xs="24" :sm="7" :lg="7">
-          <!-- 销售额 -->
-          <el-card class="box-card" :style="{ borderImageSource: 'url(' + require('@/assets/border1.png') + ')' }">
-            <div class="row-left-1-text">
-              <div class="t-i">
-                <h1>1234</h1>
-                <p>上周订单</p>
+          <!-- 数量统计 -->
+          <div class="block" :style="{ borderImageSource: 'url(' + require('@/assets/border1.png') + ')' }">
+            <el-card class="box-card">
+              <div class="row-left-1-text">
+                <div class="t-i">
+                  <h1>{{forTimeTotal.lastWeek.count}}</h1>
+                  <p>上周订单</p>
+                </div>
+                <div class="t-i">
+                  <h1>{{forTimeTotal.lastMonth.count}}</h1>
+                  <p>上月订单</p>
+                </div>
+                <div class="t-i">
+                  <h1>{{forTimeTotal.currentQuarter.count}}</h1>
+                  <p>本季订单</p>
+                </div>
+                <div class="t-i">
+                  <h1>{{forTimeTotal.currentMonth.count}}</h1>
+                  <p>本月订单</p>
+                </div>
               </div>
-              <div class="t-i">
-                <h1>1234</h1>
-                <p>本年订单</p>
+              <div class="row-left-slider">
+                <el-progress :percentage="progressValue" :show-text="false" :stroke-width="2"></el-progress>
               </div>
-              <div class="t-i">
-                <h1>1234</h1>
-                <p>订单</p>
-              </div>
-              <div class="t-i">
-                <h1>1234</h1>
-                <p>客户</p>
-              </div>
-            </div>
-            <div class="row-left-slider">
-              <el-progress :percentage="progressValue" :show-text="false" :stroke-width="2"></el-progress>
-            </div>
-            <div id="row-left-1"></div>
-          </el-card>
+              <div id="row-left-1"></div>
+            </el-card>
+          </div>
         </el-col>
         <!-- 中央大屏 -->
         <el-col class="row-content" :xs="24" :sm="10" :lg="10">
@@ -53,29 +55,36 @@
         <el-col class="row-content" :xs="24" :sm="7" :lg="7">
           <!-- 销量 -->
           <div class="row-content-r">
-            <el-card class="box-card box-card-r" :style="{ borderImageSource: 'url(' + require('@/assets/border1.png') + ')' }">
-                <div id="row-right-1"></div>
-            </el-card>
-            <el-card class="box-card box-card-r box-card-r2" :style="{ borderImageSource: 'url(' + require('@/assets/border1.png') + ')' }">
-                <div id="row-right-2"></div>
-            </el-card>
+            <div class="block" :style="{ borderImageSource: 'url(' + require('@/assets/border1.png') + ')' }">
+              <el-card class="box-card box-card-r">
+                  <div id="row-right-1"></div>
+              </el-card>
+            </div>
+            <div class="block box-card-r2" :style="{ borderImageSource: 'url(' + require('@/assets/border1.png') + ')' }">
+              <el-card class="box-card box-card-r" :style="{ borderImageSource: 'url(' + require('@/assets/border1.png') + ')' }">
+                  <div id="row-right-2"></div>
+              </el-card>
+            </div>
           </div>
         </el-col>
         <!-- 下 -->
         <el-col class="row-content row-content-bottom" :xs="24" :sm="24" :lg="24">
           <!-- 销售额 -->
-          <el-card class="box-card" :style="{ borderImageSource: 'url(' + require('@/assets/border1.png') + ')' }">
-            <div slot="header" class="clearfix">
-              <h3>实时订单数据</h3>
-            </div>
-            <div class="box-body-c">
-              <el-table :data="tableData" style="width: 100%" cell-class-name="123513132">
-                <el-table-column prop="date" label="日期" width="180"></el-table-column>
-                <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-                <el-table-column prop="address" label="地址"></el-table-column>
-              </el-table>
-            </div>
-          </el-card>
+          <div class="block" :style="{ borderImageSource: 'url(' + require('@/assets/border1.png') + ')' }">
+            <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <h3 style="margin-bottom: 0px;">实时订单数据(TOP10)</h3>
+              </div>
+              <div class="box-body-c">
+                <el-table :data="saleList" style="width: 100%" row-class-name="el-table-row-tr">
+                  <el-table-column prop="createdAt" label="日期" width="230" align="center"></el-table-column>
+                  <el-table-column prop="productName" label="产品" align="center"></el-table-column>
+                  <el-table-column prop="transactionPrice" label="价格(元)" width="180" align="center"></el-table-column>
+                  <el-table-column prop="salePerson" label="销售" width="180" align="center"></el-table-column>
+                </el-table>
+              </div>
+            </el-card>
+          </div>
         </el-col>
       </el-row>
     </div>
@@ -83,10 +92,10 @@
 </template>
 
 <script>
-import { getSalePersonData } from '@/api/statistics'
+import { getSalePersonData, getSalesForProducts, getSalesForTimeSlot } from '@/api/statistics'
+
 import { parseTime } from '@/utils/index'
 import * as echarts from 'echarts';
-// import { world } from  "@/utils/world";
 import { world } from  "@/utils/world_new.js";
 
 export default {
@@ -129,22 +138,31 @@ export default {
       },
       progressValue: 10,
       tableData: [{
-            date: '2016-05-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          }, {
-            date: '2016-05-04',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1517 弄'
-          }, {
-            date: '2016-05-01',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1519 弄'
-          }, {
-            date: '2016-05-03',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          }]
+        date: '2016-05-02',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-04',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1517 弄'
+      }, {
+        date: '2016-05-01',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1519 弄'
+      }, {
+        date: '2016-05-03',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1516 弄'
+      }],
+      saleList: [],
+      forTimeTotal: {
+        currentQuarter: {},
+        currentWeek: {},
+        currentYear: {},
+        lastMonth: {},
+        lastWeek: {},
+        currentMonth: {}
+      }
     }
   },
   created() {
@@ -163,6 +181,8 @@ export default {
   },
   mounted() {
     this.getSalePersonData()
+    this.getSalesForProducts()
+    this.getSalesForTimeSlot()
   },
   methods: {
     /**
@@ -174,21 +194,26 @@ export default {
       let that = this
       getSalePersonData(this.searchForm).then((res) => {
         that.getSalespersonSalesPrice(res.data.salesPrice)
-        that.getDataRight1(res.data.salesVolume)
-        that.getDataRight2(res.data.salesVolume)
         that.getLargeScreen()
       })
     },
-    // 头部 - 搜索
-    search() {
-      this.searchForm.pageNum = 1
-      this.getSalePersonData()
+    // 查询产品销售数据
+    getSalesForProducts() {
+      let that = this
+      getSalesForProducts(this.searchForm).then((res) => {
+        that.getDataRight1(res.data.salesTotal)
+        that.getDataRight2(res.data.salesNum)
+      })
     },
-    // 搜索 - 时间选择
-    datetimeChange(val){
-      this.searchForm.startTime = val[0]
-      this.searchForm.endTime = val[1]
+    // 查询时间段销量统计
+    getSalesForTimeSlot(){
+      let that = this
+      getSalesForTimeSlot().then(res => {
+        that.forTimeTotal = res.data
+        that.saleList = res.data.saleList.rows
+      })
     },
+
     // 中央大屏
     getLargeScreen(){
       let chartDom = document.getElementById('important-content');
@@ -469,7 +494,7 @@ export default {
 
       option && myChart.setOption(option);
     },
-    //销售额
+    // 左1 - 销售额
     getSalespersonSalesPrice(data){
       let chartDom = document.getElementById('row-left-1');
       let myChart = echarts.init(chartDom);
@@ -502,7 +527,7 @@ export default {
             stack: 'Total',
             barWidth: 18,
             itemStyle: {
-              borderRadius: [9, 9, 0, 0],
+              borderRadius: [9],
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 { offset: 0, color: '#14c8d4' },
                 { offset: 1, color: '#43eec6' }
@@ -587,6 +612,9 @@ export default {
             color: 'rgb(126, 170, 224)'
           }
         },
+        textStyle: {
+          color: 'rgb(126, 170, 224)'
+        },
         xAxis: {
           type: 'category',
           data: data.xAxis
@@ -604,7 +632,7 @@ export default {
             stack: 'Total',
             barWidth: 18,
             itemStyle: {
-              borderRadius: [9, 9, 0, 0],
+              borderRadius: [9],
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 { offset: 0, color: '#14c8d4' },
                 { offset: 1, color: '#43eec6' }
@@ -625,29 +653,50 @@ export default {
 
       option && myChart.setOption(option);
     },
-
   }
 }
 </script>
 
 <style lang="scss" scoped>
+::v-deep .navbar{
+  display: none;
+}
 .visualization{
   width: 100%;
-  height: calc(120vh);
-
-  .box-card{
-    background: rgba(180, 181, 198, 0.1);
+  height: calc(140vh);
+  .header{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: -50px;
+    h1{
+      color: rgb(30, 144, 255);
+      font-size: 60px;
+      padding-top: 10px;
+      margin: 0;
+    }
+    svg{
+      margin-top: -30px;
+      transform:scaleX(0.65);
+    }
+  }
+  .block{
     border-image-slice: 10 16 15 10 fill;
     border-width: 10px 16px 15px 10px;
     border-style: solid;
     box-sizing: border-box;
+  }
+  .box-card{
+    background: rgba(180, 181, 198, 0.1);
+    border: none;
   }
   .box-card-center{
     background: none;
   }
   #important-content{
     width: 100%;
-    height: 70vh;
+    height: 60vh;
   }
   .row-left-1-text{
     display: flex;
@@ -661,7 +710,7 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #fff;
+    color: rgb(199, 205, 79);
   }
   .row-left-1-text .t-i p{
     margin: 0;
@@ -669,11 +718,11 @@ export default {
   }
   .row-left-1-text .t-i h1{
     margin: 10px;
-    font-size: 50px;
+    font-size: 58px;
   }
   #row-left-1{
     width: 100%;
-    height: 43vh;
+    height: 33vh;
   }
   .row-left-slider{
     height: 7vh;
@@ -686,7 +735,7 @@ export default {
 
   #row-right-1, #row-right-2{
     width: 100%;
-    height: calc(35vh - 40px);
+    height: calc(30vh - 40px);
   }
   .box-card-r2{
     margin-top: 20px;
@@ -696,12 +745,36 @@ export default {
 
 .row-content-bottom{
   margin-top: 20px;
-  height: calc(30vh - 120px);
   .el-table, .el-table__expanded-cell{
     background: none;
   }
 }
+::v-deep .row-content-bottom .el-card__header{
+  border-bottom: none;
+}
 .row-content-bottom h3{
   color: rgb(126, 170, 224);
+}
+::v-deep .el-table-row-tr{
+  background: none;
+  color: #fff;
+}
+::v-deep .el-table td.el-table__cell{
+  border-bottom: none;
+}
+::v-deep .el-table--enable-row-hover .el-table__body tr:hover>td.el-table__cell{
+  background: #2cdbcd;
+}
+::v-deep .el-table tr{
+  background: none;
+}
+::v-deep .el-table th.el-table__cell{
+  background: none;
+  color: #fff;
+  border: 1px solid rgb(51, 65, 107);
+  font-size: 16px;
+}
+::v-deep .el-table::before{
+  height: 0;
 }
 </style>
