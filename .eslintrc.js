@@ -15,13 +15,13 @@ module.exports = {
   //it is base on https://github.com/vuejs/eslint-config-vue
   rules: {
     "vue/max-attributes-per-line": [2, {
-      "singleline": 10,
+      "singleline": 20,
       "multiline": {
-        "max": 1,
-        "allowFirstLine": false
+        "max": 20,
+        "allowFirstLine": true
       }
     }],
-    "vue/html-self-closing": ["error",{ //vue html标签验证
+    "vue/html-self-closing": ["error", { //vue html标签验证
       "html": {
         "void": "never",
         "normal": "any",
@@ -31,7 +31,7 @@ module.exports = {
       "math": "always"
     }],
     "vue/singleline-html-element-content-newline": "off",
-    "vue/multiline-html-element-content-newline":"off",
+    "vue/multiline-html-element-content-newline": "off",
     "vue/name-property-casing": ["error", "PascalCase"],
     "vue/no-v-html": "off",
     'accessor-pairs': 2,
@@ -56,7 +56,9 @@ module.exports = {
     'curly': [2, 'multi-line'],
     'dot-location': [2, 'property'],
     'eol-last': 2,
-    'eqeqeq': ["error", "always", {"null": "ignore"}],
+    'eqeqeq': ["error", "always", {
+      "null": "ignore"
+    }],
     'generator-star-spacing': [2, {
       'before': true,
       'after': true

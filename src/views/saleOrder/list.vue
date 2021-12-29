@@ -4,7 +4,7 @@
     <div class="header">
       <el-form :inline="true" :model="searchForm" class="demo-form-inline">
         <el-form-item label="时间范围">
-          <el-date-picker v-model="searchForm.date" @change="datetimeChange" value-format="yyyy-MM-dd HH:mm:ss" :default-time="['00:00:00', '23:59:59']" type="datetimerange" :picker-options="pickerOptions" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right"></el-date-picker>
+          <el-date-picker v-model="searchForm.date" value-format="yyyy-MM-dd HH:mm:ss" :default-time="['00:00:00', '23:59:59']" type="datetimerange" :picker-options="pickerOptions" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right" @change="datetimeChange"></el-date-picker>
         </el-form-item>
         <el-form-item label="销售员">
           <el-input v-model="searchForm.salePerson" clearable placeholder="销售员"></el-input>
@@ -37,68 +37,57 @@
     <!-- 列表 -->
     <el-card class="box-card">
       <div class="footer">
-        <el-pagination
-          background
-          :current-page="searchForm.pageNum"
-          :page-sizes="[10, 50, 100, 200, 300, total]"
-          :page-size="searchForm.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
+        <el-pagination background :current-page="searchForm.pageNum" :page-sizes="[10, 50, 100, 200, 300, total]" :page-size="searchForm.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
       </div>
-      <el-table
-        v-loading="listLoading"
-        :data="list"
-        element-loading-text="Loading"
-        border
-        fit
-        show-summary
-        highlight-current-row
-      >
-        <el-table-column label="编号" prop="id" align="center" width="100"></el-table-column>
-        <el-table-column label="客户名称" prop="customerName" sortable width="160" align="center"></el-table-column>
-        <el-table-column label="客户编号" sortable width="120" align="center">
+      <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" stripe fit show-summary highlight-current-row>
+        <el-table-column label="编号" prop="id" width="100"></el-table-column>
+        <el-table-column label="客户名称" prop="customerName" sortable width="160"></el-table-column>
+        <el-table-column label="客户编号" sortable width="120">
           <template slot-scope="scope">
             {{ scope.row.customerCode }}
           </template>
         </el-table-column>
-        <el-table-column prop="productName" label="产品名称" width="280" sortable align="center"></el-table-column>
-        <el-table-column label="国家" width="110" align="center">
+        <el-table-column prop="productName" label="产品名称" width="280" sortable>
+          <template slot-scope="scope">
+            <div v-for="(item, index) in scope.row.productArr" :key="index" class="product-item">
+              <el-tag>{{ item }}</el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="国家" width="110">
           <template slot-scope="scope">
             {{ scope.row.country }}
           </template>
         </el-table-column>
-        <el-table-column prop="payTime" label="收款时间" sortable width="130" align="center"></el-table-column>
-        <el-table-column prop="userInfo.username" label="销售" sortable width="130" align="center"></el-table-column>
-        <el-table-column prop="saleDepartment" label="部门" sortable width="130" align="center"></el-table-column>
-        <el-table-column prop="transactionPrice" label="成交价格(元)" sortable width="130" align="center"></el-table-column>
-        <el-table-column prop="transactionPriceForeign" label="成交价格(外币)" sortable width="140" align="center"></el-table-column>
-        <el-table-column prop="transactionCount" label="数量" width="140" align="center"></el-table-column>
-        <el-table-column label="打款人信息" width="140" align="center">
+        <el-table-column prop="payTime" label="收款时间" sortable width="130"></el-table-column>
+        <el-table-column prop="userInfo.username" label="销售" sortable width="130"></el-table-column>
+        <el-table-column prop="saleDepartment" label="部门" sortable width="130"></el-table-column>
+        <el-table-column prop="transactionPrice" label="成交价格(元)" sortable width="130"></el-table-column>
+        <el-table-column prop="transactionPriceForeign" label="成交价格(外币)" sortable width="140"></el-table-column>
+        <el-table-column prop="transactionCount" label="数量" width="140"></el-table-column>
+        <el-table-column label="打款人信息" width="140">
           <template slot-scope="scope">
             {{ scope.row.payName }}
           </template>
         </el-table-column>
-        <el-table-column label="联系方式" width="120" align="center">
+        <el-table-column label="联系方式" width="120">
           <template slot-scope="scope">
             {{ scope.row.payContactInfo }}
           </template>
         </el-table-column>
-        <el-table-column label="收款方式" width="100" align="center">
+        <el-table-column label="收款方式" width="100">
           <template slot-scope="scope">
             {{ scope.row.payMethods == 1 ? '对公支付' : '对私支付' }}
           </template>
         </el-table-column>
-        <el-table-column label="是否开票" width="120" align="center">
+        <el-table-column label="是否开票" width="120">
           <template slot-scope="scope">
-            {{ scope.row.isInvoice == 2 ? '否' : '是' }}
+            {{ scope.row.isInvoice == 2 ? '未开票' : '已开票' }}
           </template>
         </el-table-column>
-        <el-table-column label="创建时间" prop="createdAt" width="160" align="center"></el-table-column>
-        <el-table-column label="修改时间" prop="updatedAt" align="center" width="160"></el-table-column>
-        <el-table-column label="操作" align="center" width="180" fixed="right">
+        <el-table-column label="创建时间" prop="createdAt" width="160"></el-table-column>
+        <el-table-column label="修改时间" prop="updatedAt" width="160"></el-table-column>
+        <el-table-column label="操作" width="180" align="center" fixed="right">
           <template slot-scope="scope">
             <el-button type="primary" size="mini" @click="editItem(scope.row)">修改</el-button>
             <el-button type="danger" size="mini" @click="deleteItem(scope.row)">删除</el-button>
@@ -106,16 +95,7 @@
         </el-table-column>
       </el-table>
       <div class="footer">
-        <el-pagination
-          background
-          :current-page="searchForm.pageNum"
-          :page-sizes="[10, 50, 100, 200, 300, total]"
-          :page-size="searchForm.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
+        <el-pagination background :current-page="searchForm.pageNum" :page-sizes="[10, 50, 100, 200, 300, total]" :page-size="searchForm.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
       </div>
     </el-card>
     <!-- 表单 -->
@@ -124,8 +104,8 @@
         <el-row :gutter="10">
           <el-col :xs="24" :sm="24" :md="24" :lg="24">
             <el-form-item label="产品选择" prop="productId">
-              {{form.productName}}
-              <el-cascader-panel v-model="form.productId" :options="productlist" :props="productlistProps" @change="productSelectChange"></el-cascader-panel>
+              {{ form.productName }}
+              <el-cascader-panel v-model="form.productId" :options="productlist" :props="productlistProps" :show-all-levels="false" @change="productSelectChange"></el-cascader-panel>
             </el-form-item>
           </el-col>
           <el-col v-if="countryShow" :xs="24" :sm="24" :md="12" :lg="12">
@@ -216,7 +196,8 @@
       <el-row :gutter="20">
         <el-col :span="24">
           <div class="grid-content bg-purple">
-            <h3>1. 请按照数据模板的格式准备要导入的数据。<el-link href="/customerManagement/salesmodule.xlsx" type="primary" target="_blank" :underline="false" style="font-size: 1.1em;">点击下载(销售数据模板)</el-link></h3>
+            <h3>1. 请按照数据模板的格式准备要导入的数据。<el-link href="/customerManagement/salesmodule.xlsx" type="primary" target="_blank" :underline="false" style="font-size: 1.1em;">点击下载(销售数据模板)</el-link>
+            </h3>
             <p>导入文件请勿超过1MB（约4,000条数据）。</p>
           </div>
           <div class="grid-content bg-purple">
@@ -278,7 +259,15 @@
 
 <script>
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
-import { getProductList, getCountrylist, getSaleList, creatSaleItem, editSaleItem, deleteSaleItem, batchAdd } from '@/api/saleOrder'
+import {
+  getProductList,
+  getCountrylist,
+  getSaleList,
+  creatSaleItem,
+  editSaleItem,
+  deleteSaleItem,
+  batchAdd
+} from '@/api/saleOrder'
 import { parseTime } from '@/utils/index'
 import { Loading } from 'element-ui'
 
@@ -302,31 +291,35 @@ export default {
         pageSize: 10
       },
       pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-            picker.$emit('pick', [start, end]);
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
           }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-            picker.$emit('pick', [start, end]);
-          }
-        }]
+        ]
       },
       total: 0,
       // 列表
@@ -335,8 +328,10 @@ export default {
       listLoading: true,
       // 产品选择props
       productlistProps: {
-        value: 'id',
-        label: 'categoryName'
+        // value: 'id',
+        value: 'categoryName',
+        label: 'categoryName',
+        multiple: true
       },
       // 表单
       formType: 'creat',
@@ -360,24 +355,12 @@ export default {
         remark: ''
       },
       rules: {
-        payTime: [
-          { required: true, message: '请填写', trigger: 'blur' }
-        ],
-        productId: [
-          { required: true, message: '请选择产品', trigger: 'blur' }
-        ],
-        productName: [
-          { required: true, message: '请填写', trigger: 'blur' }
-        ],
-        customerName: [
-          { required: true, message: '请填写', trigger: 'blur' }
-        ],
-        customerCode: [
-          { required: true, message: '请填写', trigger: 'blur' }
-        ],
-        salePerson: [
-          { required: true, message: '请填写', trigger: 'blur' }
-        ]
+        payTime: [{ required: true, message: '请填写', trigger: 'blur' }],
+        productId: [{ required: true, message: '请选择产品', trigger: 'blur' }],
+        productName: [{ required: true, message: '请填写', trigger: 'blur' }],
+        customerName: [{ required: true, message: '请填写', trigger: 'blur' }],
+        customerCode: [{ required: true, message: '请填写', trigger: 'blur' }],
+        salePerson: [{ required: true, message: '请填写', trigger: 'blur' }]
       },
       uploadDialogShow: false,
       tableData: [],
@@ -419,7 +402,10 @@ export default {
     // 查询 - 销售记录
     getList() {
       getSaleList(this.searchForm).then((res) => {
-        this.list = res.data.rows
+        this.list = res.data.rows.map((x) => {
+          x.productArr = x.productName.split(';')
+          return x
+        })
         this.total = res.data.count
         this.listLoading = false
       })
@@ -430,7 +416,7 @@ export default {
       const form = that.form
       form.productId = JSON.stringify(form.productId)
 
-      creatSaleItem(form).then(res => {
+      creatSaleItem(form).then((res) => {
         that.$message({
           message: '创建成功',
           type: 'success'
@@ -445,7 +431,7 @@ export default {
       const form = that.form
       form.productId = JSON.stringify(form.productId)
 
-      editSaleItem(form).then(res => {
+      editSaleItem(form).then((res) => {
         that.$message({
           message: '修改成功',
           type: 'success'
@@ -462,7 +448,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteSaleItem({ id: row.id }).then(res => {
+        deleteSaleItem({ id: row.id }).then((res) => {
           that.$message({
             message: '删除成功',
             type: 'success'
@@ -513,7 +499,9 @@ export default {
         customerCode: row.customerCode,
         transactionPrice: parseFloat(row.transactionPrice),
         transactionPriceForeign: parseFloat(row.transactionPriceForeign),
-        transactionCount: row.transactionCount ? parseFloat(row.transactionCount) : 1,
+        transactionCount: row.transactionCount
+          ? parseFloat(row.transactionCount)
+          : 1,
         salePersonId: row.salePersonId,
         salePerson: row.salePerson,
         saleDepartment: row.saleDepartment,
@@ -545,7 +533,7 @@ export default {
       })
     },
     // 搜索 - 时间选择
-    datetimeChange(val){
+    datetimeChange(val) {
       this.searchForm.startTime = val[0]
       this.searchForm.endTime = val[1]
     },
@@ -556,33 +544,16 @@ export default {
     },
     // 产品选择
     productSelectChange(value) {
-      const that = this
-
+      // console.log('选中', value)
       this.form.productId = value
       let productName = []
-
-       // 找到一级
-      let find_1 = that.productlist.find(x => x.id ===  value[0])
-      productName.push(find_1.categoryName)
-
-      // 二级存在
-      if(find_1.children && find_1.children.length > 0){
-        let find_2 = find_1.children.find(y => y.id ===  value[1])
-        productName.push(find_2.categoryName)
-        // 三级存在
-        console.log(find_2)
-        if(find_2.children && find_2.children.length > 0){
-          let find_3 = find_2.children.find(z => z.id ===  value[2])
-          productName.push(find_3.categoryName)
-          // 四级存在
-          if(find_3.children && find_3.children.length > 0){
-            let find_4 = find_3.children.find(j => j.id ===  value[3])
-            productName.push(find_4.categoryName)
-          }
-        }
-      }
-      
-      this.form.productName = productName.join('/')
+      let pText = ''
+      value.map((x) => {
+        pText = x.join('/')
+        productName.push(pText)
+      })
+      this.form.productName = productName.join(';')
+      this.form.transactionCount = value.length
     },
     // 分页
     handleSizeChange(val) {
@@ -601,16 +572,52 @@ export default {
     // 导出excel
     exportExcel() {
       const that = this
-      const filterVal = ['customerName', 'customerCode', 'productName', 'country', 'payTime', 'salePerson', 'saleDepartment', 'transactionPrice', 'transactionPriceForeign', 'payName', 'payContactInfo', 'payMethods', 'isInvoice', 'remark', 'createdAt']
+      const filterVal = [
+        'customerName',
+        'customerCode',
+        'productName',
+        'country',
+        'payTime',
+        'salePerson',
+        'saleDepartment',
+        'transactionPrice',
+        'transactionPriceForeign',
+        'payName',
+        'payContactInfo',
+        'payMethods',
+        'isInvoice',
+        'remark',
+        'createdAt'
+      ]
       const list = that.list
       const data = this.formatJson(filterVal, list)
 
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['客户名称', '客户编号', '产品名称', '国家', '收款时间', '销售员', '销售部门', '成交价格(元)', '成交价格(外币)', '打款人信息', '联系方式', '收款方式: 1公对公,2对私', '开票:1是，2否', '备注', '创建时间']
+      import('@/vendor/Export2Excel').then((excel) => {
+        const tHeader = [
+          '客户名称',
+          '客户编号',
+          '产品名称',
+          '国家',
+          '收款时间',
+          '销售员',
+          '销售部门',
+          '成交价格(元)',
+          '成交价格(外币)',
+          '打款人信息',
+          '联系方式',
+          '收款方式: 1公对公,2对私',
+          '开票:1是，2否',
+          '备注',
+          '创建时间'
+        ]
         excel.export_json_to_excel({
           header: tHeader, // 表头 必填
           data, // 具体数据 必填
-          filename: 'sales-data-forOrder-count' + that.searchForm.pageSize + '-time' + new Date().getTime(), // 文件名
+          filename:
+            'sales-data-forOrder-count' +
+            that.searchForm.pageSize +
+            '-time' +
+            new Date().getTime(), // 文件名
           autoWidth: true, // 是否数据宽度自适应
           bookType: 'xlsx' // 文件格式
         })
@@ -628,17 +635,50 @@ export default {
       this.getList()
 
       setTimeout(() => {
-        const filterVal = ['customerName', 'customerCode', 'productName', 'country', 'payTime', 'salePerson', 'saleDepartment', 'transactionPrice', 'transactionPriceForeign', 'payName', 'payContactInfo', 'payMethods', 'isInvoice', 'remark', 'createdAt']
+        const filterVal = [
+          'customerName',
+          'customerCode',
+          'productName',
+          'country',
+          'payTime',
+          'salePerson',
+          'saleDepartment',
+          'transactionPrice',
+          'transactionPriceForeign',
+          'payName',
+          'payContactInfo',
+          'payMethods',
+          'isInvoice',
+          'remark',
+          'createdAt'
+        ]
         const list = that.list
         // console.log(list);
         const data = this.formatJson(filterVal, list)
 
-        import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['客户名称', '客户编号', '产品名称', '国家', '收款时间', '销售员', '销售部门', '成交价格(元)', '成交价格(外币)', '打款人信息', '联系方式', '收款方式: 1公对公,2对私', '开票:1是，2否', '备注', '创建时间']
+        import('@/vendor/Export2Excel').then((excel) => {
+          const tHeader = [
+            '客户名称',
+            '客户编号',
+            '产品名称',
+            '国家',
+            '收款时间',
+            '销售员',
+            '销售部门',
+            '成交价格(元)',
+            '成交价格(外币)',
+            '打款人信息',
+            '联系方式',
+            '收款方式: 1公对公,2对私',
+            '开票:1是，2否',
+            '备注',
+            '创建时间'
+          ]
           excel.export_json_to_excel({
             header: tHeader, // 表头 必填
             data, // 具体数据 必填
-            filename: 'sales-data-forOrder-all' + '-time' + new Date().getTime(), // 文件名
+            filename:
+              'sales-data-forOrder-all' + '-time' + new Date().getTime(), // 文件名
             autoWidth: true, // 是否数据宽度自适应
             bookType: 'xlsx' // 文件格式
           })
@@ -651,9 +691,7 @@ export default {
     },
     // 导出excel 数据一条条进
     formatJson(filterVal, jsonData) {
-      return jsonData.map(v =>
-        filterVal.map(j => v[j])
-      )
+      return jsonData.map((v) => filterVal.map((j) => v[j]))
     },
 
     /**
@@ -678,10 +716,15 @@ export default {
         // 付款方式
         let payMethods = value.收款方式
         if (payMethods) {
-          payMethods.indexOf('对公') !== -1 ? payMethods = 1 : payMethods = 2
+          payMethods.indexOf('对公') !== -1
+            ? (payMethods = 1)
+            : (payMethods = 2)
         }
         // 收款时间判断
-        let payTime = typeof value.收款时间 === 'string' ? value.收款时间 : this.formatExcelDate(new Date(value.收款时间), '-')
+        let payTime =
+          typeof value.收款时间 === 'string'
+            ? value.收款时间
+            : this.formatExcelDate(new Date(value.收款时间), '-')
         // 开票判断
         let isInvoice = ''
         if (value.是否开票) {
@@ -691,20 +734,20 @@ export default {
         }
 
         let dataItem = {
-          'isInvoice': isInvoice,
-          'payMethods': payMethods,
-          'payTime': payTime,
-          'payContactInfo': value.联系方式,
-          'salePerson': value.对应销售,
-          'saleDepartment': value.部门,
-          'customerName': value.客户名称,
-          'customerCode': value.客户编号,
-          'productName': value.产品名称,
-          'country': value.国家,
-          'payName': value.打款人信息,
-          'transactionPrice': value.成交价格 * 100,
-          'transactionPriceForeign': value.外币价格 * 100,
-          'remark': value.备注
+          isInvoice: isInvoice,
+          payMethods: payMethods,
+          payTime: payTime,
+          payContactInfo: value.联系方式,
+          salePerson: value.对应销售,
+          saleDepartment: value.部门,
+          customerName: value.客户名称,
+          customerCode: value.客户编号,
+          productName: value.产品名称,
+          country: value.国家,
+          payName: value.打款人信息,
+          transactionPrice: value.成交价格 * 100,
+          transactionPriceForeign: value.外币价格 * 100,
+          remark: value.备注
         }
         return dataItem
       })
@@ -714,7 +757,7 @@ export default {
     // 提交excel
     comfirmUploadExcel() {
       console.log(this.tableData)
-      batchAdd(this.tableData).then(res => {
+      batchAdd(this.tableData).then((res) => {
         console.log('uploadExcel', res)
         if (res.code !== 200) {
           return this.$message.error('导入文件失败！')
@@ -737,16 +780,26 @@ export default {
       // const minutes = time.getMinutes()
       if (format && format.length === 1) {
         // return year + format + month + format + date + ' ' + hours + ':' + minutes;
-        return year + format + (month < 10 ? '0' + month : month) + format + (date < 10 ? '0' + date : date)
+        return (
+          year +
+          format +
+          (month < 10 ? '0' + month : month) +
+          format +
+          (date < 10 ? '0' + date : date)
+        )
       }
-      return year + (month < 10 ? '0' + month : month) + (date < 10 ? '0' + date : date)
+      return (
+        year +
+        (month < 10 ? '0' + month : month) +
+        (date < 10 ? '0' + date : date)
+      )
     }
   }
 }
 </script>
 
 <style>
-.footer{
+.footer {
   margin: 20px 0;
   display: flex;
   justify-content: flex-end;

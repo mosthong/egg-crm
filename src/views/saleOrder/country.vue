@@ -10,18 +10,12 @@
         </el-form>
       </div>
       <!-- 列表 -->
-      <el-table
-        v-loading="listLoading"
-        :data="list"
-        element-loading-text="Loading"
-        fit
-        border
-      >
+      <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" fit border>
         <el-table-column label="国家" prop="country"></el-table-column>
         <el-table-column label="操作" align="center" width="180" fixed="right">
           <template slot-scope="scope">
-            <el-button type="primary" size="mini" @click="editItem(scope.row)" v-if="scope.row.country != '地区'">修改</el-button>
-            <el-button type="danger" size="mini" @click="deleteItem(scope.row)" v-if="scope.row.country != '地区'">删除</el-button>
+            <el-button v-if="scope.row.country != '地区'" type="primary" size="mini" @click="editItem(scope.row)">修改</el-button>
+            <el-button v-if="scope.row.country != '地区'" type="danger" size="mini" @click="deleteItem(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -42,8 +36,13 @@
 </template>
 
 <script>
-import { getCountrylist, creatCountryItem, editCountryItem, deleteCountryItem } from '@/api/saleOrder'
-import { Loading } from 'element-ui';
+import {
+  getCountrylist,
+  creatCountryItem,
+  editCountryItem,
+  deleteCountryItem
+} from '@/api/saleOrder'
+// import { Loading } from 'element-ui'
 
 export default {
   data() {
@@ -57,18 +56,14 @@ export default {
       formType: 'creat',
       formShow: false,
       form: {
-          "id": 0,
-          "continent": "",
-          "country": ""
+        id: 0,
+        continent: '',
+        country: ''
       },
       rules: {
-        continent: [
-          { required: true, message: '请选择', trigger: 'blur' }
-        ],
-        country: [
-          { required: true, message: '请输入', trigger: 'blur' }
-        ]
-      },
+        continent: [{ required: true, message: '请选择', trigger: 'blur' }],
+        country: [{ required: true, message: '请输入', trigger: 'blur' }]
+      }
     }
   },
   created() {
@@ -83,7 +78,7 @@ export default {
     getList() {
       this.listLoading = true
       getCountrylist().then((res) => {
-        this.list = res.data.map(x => {
+        this.list = res.data.map((x) => {
           let item = {
             id: x.id,
             continent: x.continent,
@@ -98,7 +93,7 @@ export default {
     // 添加
     creat() {
       const that = this
-      creatCountryItem(that.form).then(res => {
+      creatCountryItem(that.form).then((res) => {
         that.$message({
           message: '创建成功',
           type: 'success'
@@ -109,7 +104,7 @@ export default {
     },
     edit() {
       const that = this
-      editCountryItem(that.form).then(res => {
+      editCountryItem(that.form).then((res) => {
         that.$message({
           message: '修改成功',
           type: 'success'
@@ -123,8 +118,8 @@ export default {
       this.formType = 'creat'
       this.formShow = true
       this.form = {
-          "continent": "",
-          "country": ""
+        continent: '',
+        country: ''
       }
     },
     // 修改
@@ -132,9 +127,9 @@ export default {
       this.formType = 'edit'
       this.formShow = true
       this.form = {
-        'id': row.id,
-        "continent": row.continent,
-        "country": row.country
+        id: row.id,
+        continent: row.continent,
+        country: row.country
       }
     },
     // 删除
@@ -145,7 +140,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteCountryItem({id: row.id}).then(res => {
+        deleteCountryItem({ id: row.id }).then((res) => {
           that.$message({
             message: '删除成功',
             type: 'success'
@@ -163,7 +158,7 @@ export default {
       const that = this
       this.$refs['creatForm'].validate((valid) => {
         if (valid) {
-          if (that.formType == 'edit') {
+          if (that.formType === 'edit') {
             that.edit()
           } else {
             that.creat()
@@ -173,13 +168,13 @@ export default {
           return false
         }
       })
-    },
+    }
   }
 }
 </script>
 
 <style>
-.footer{
+.footer {
   margin: 20px 0;
   display: flex;
   justify-content: flex-end;
