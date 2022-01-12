@@ -656,6 +656,7 @@ export default {
             name: '商品',
             type: 'pie',
             radius: ['50%', '70%'],
+            center: ['50%', '60%'],
             label: {
               color: '#fff',
               formatter: '{b|{b}：}{c}  {per|{d}%}  ',
@@ -745,7 +746,7 @@ export default {
 }
 .visualization {
   width: 100%;
-  height: calc(140vh);
+
   .header {
     display: flex;
     flex-direction: column;

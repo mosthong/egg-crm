@@ -27,6 +27,8 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="search">查 询</el-button>
+        </el-form-item>
+        <el-form-item>
           <el-button type="primary" icon="el-icon-plus" @click="creatItem">添加销售记录</el-button>
           <el-button type="primary" icon="el-icon-download" @click="exportExcel">导出EXCEL</el-button>
           <el-button type="primary" icon="el-icon-download" @click="exportExcelAll">导出全部数据</el-button>
@@ -401,13 +403,16 @@ export default {
     },
     // 查询 - 销售记录
     getList() {
+      this.listLoading = true
       getSaleList(this.searchForm).then((res) => {
         this.list = res.data.rows.map((x) => {
           x.productArr = x.productName.split(';')
           return x
         })
         this.total = res.data.count
-        this.listLoading = false
+        setTimeout(() => {
+          this.listLoading = false
+        }, 500)
       })
     },
     // 添加

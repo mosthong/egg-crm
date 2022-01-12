@@ -98,7 +98,7 @@ export const asyncRoutes = [
       },
       {
         path: 'department',
-        name: 'department',
+        name: 'statisticsDepartment',
         component: () =>
           import('@/views/statistics/department'),
         meta: {
@@ -109,12 +109,23 @@ export const asyncRoutes = [
       },
       {
         path: 'salesperson',
-        name: 'salesperson',
+        name: 'statisticsSalesperson',
         component: () =>
           import('@/views/statistics/salesperson'),
         meta: {
           title: '销售员数据',
           icon: 'el-icon-data-line'
+        },
+        children: []
+      },
+      {
+        path: 'goods',
+        name: 'statisticsGoods',
+        component: () =>
+          import('@/views/statistics/goods'),
+        meta: {
+          title: '产品销售情况',
+          icon: 'el-icon-s-data'
         },
         children: []
       }

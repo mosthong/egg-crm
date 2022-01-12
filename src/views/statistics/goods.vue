@@ -17,13 +17,13 @@
         <el-col class="row-content" :xs="24" :sm="24" :lg="24">
           <!-- 销售额 -->
           <el-card class="box-card">
-            <div id="salespersonSalesPrice"></div>
+            <div id="data-column-1"></div>
           </el-card>
         </el-col>
         <el-col class="row-content" :xs="24" :sm="24" :lg="24">
           <!-- 销量 -->
           <el-card class="box-card">
-            <div id="salePersonSalesVolume"></div>
+            <div id="data-column-2"></div>
           </el-card>
         </el-col>
       </el-row>
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { getSalePersonData } from '@/api/statistics'
+import { getSalesForProducts } from '@/api/statistics'
 import { parseTime } from '@/utils/index'
 import * as echarts from 'echarts';
 
@@ -84,54 +84,114 @@ export default {
     
   },
   mounted() {
-    this.getSalePersonData()
+    this.getSalesForProducts()
   },
   methods: {
     /**
      * 网络请求
      * ----------------------------------------------------------------
      */
-    // 查询销售数据
-    getSalePersonData() {
-      let that = this
-      getSalePersonData(this.searchForm).then((res) => {
-        that.getSalespersonSalesPrice(res.data.salesPrice)
-        that.getSalePersonSalesVolume(res.data.salesVolume)
-      })
-    },
     // 头部 - 搜索
     search() {
       this.searchForm.pageNum = 1
-      this.getSalePersonData()
+      this.getSalesForProducts()
     },
     // 搜索 - 时间选择
     datetimeChange(val){
       this.searchForm.startTime = val[0]
       this.searchForm.endTime = val[1]
     },
-    // 数据统计1 - 销售额
-    getSalespersonSalesPrice(data){
-      let chartDom = document.getElementById('salespersonSalesPrice');
-      let myChart = echarts.init(chartDom);
-      let option;
+    
+    // 查询产品销售数据
+    getSalesForProducts() {
+      let that = this
+      getSalesForProducts(this.searchForm).then((res) => {
+        that.getDataRight1(res.data.salesTotal)
+        that.getDataRight2(res.data.salesNum)
+      })
+    },
+    // 右1
+    getDataRight1(data) {
+      let chartDom = document.getElementById('data-column-1')
+      let myChart = echarts.init(chartDom)
+      let option
+
+      let op_data = data.xAxis.map((x, i) => {
+        return { value: data.data[i], name: x }
+      })
 
       option = {
         title: {
-          text: '销售额(元)'
+          text: '热销商品',
+          textStyle: {
+            color: 'rgb(0, 0, 0)'
+          }
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        series: [
+          {
+            name: '商品',
+            type: 'pie',
+            radius: ['50%', '70%'],
+            label: {
+              color: '#333',
+              formatter: '{b|{b}：}{c}  {per|{d}%}  ',
+              rich: {
+                b: {
+                  color: '#4C5058',
+                  fontSize: 14,
+                  fontWeight: 'bold',
+                  lineHeight: 33
+                },
+                per: {
+                  color: '#fff',
+                  backgroundColor: '#4C5058',
+                  padding: [3, 4],
+                  borderRadius: 4
+                }
+              }
+            },
+            data: op_data
+          }
+        ]
+      }
+
+      option && myChart.setOption(option)
+    },
+    // 右2
+    getDataRight2(data) {
+      let chartDom = document.getElementById('data-column-2')
+      let myChart = echarts.init(chartDom)
+      let option
+
+      option = {
+        title: {
+          text: '销量(件)',
+          textStyle: {
+            color: 'rgb(0, 0, 0)'
+          }
+        },
+        textStyle: {
+          color: 'rgb(0, 0, 0)'
         },
         xAxis: {
           type: 'category',
           data: data.xAxis
         },
         yAxis: {
-          type: 'value'
+          type: 'value',
+          splitLine: {
+            show: false
+          }
         },
         series: [
           {
             name: '销售额',
             type: 'bar',
             stack: 'Total',
-            barWidth: 28,
+            barWidth: 38,
             itemStyle: {
               borderRadius: [9],
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -141,66 +201,29 @@ export default {
             },
             label: {
               show: true,
-              position: 'top'
+              position: 'top',
+              color: '#000'
+            },
+            labelLine: {
+              show: false
             },
             data: data.data
           }
         ]
-      };
+      }
 
-      option && myChart.setOption(option);
-    },
-    // 数据统计2 - 销量
-    getSalePersonSalesVolume(data){
-      let chartDom = document.getElementById('salePersonSalesVolume');
-      let myChart = echarts.init(chartDom);
-      let option;
-
-      option = {
-        title: {
-          text: '销量(件)'
-        },
-        xAxis: {
-          type: 'category',
-          data: data.xAxis
-        },
-        yAxis: {
-          type: 'value'
-        },
-        series: [
-          {
-            name: '销售额',
-            type: 'bar',
-            stack: 'Total',
-            barWidth: 28,
-            itemStyle: {
-              borderRadius: [9],
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: '#14c8d4' },
-                { offset: 1, color: '#43eec6' }
-              ])
-            },
-            label: {
-              show: true,
-              position: 'top'
-            },
-            data: data.data
-          }
-        ]
-      };
-
-      option && myChart.setOption(option);
-    },
+      option && myChart.setOption(option)
+    }
   }
 }
 </script>
 
 <style>
-#salespersonSalesPrice{
+#data-column-1{
   width: 100%;
   height: 500px;
 }
-#salePersonSalesVolume{
+#data-column-2{
   width: 100%;
   height: 500px;
 }
