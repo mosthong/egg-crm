@@ -410,9 +410,7 @@ export default {
           return x
         })
         this.total = res.data.count
-        setTimeout(() => {
-          this.listLoading = false
-        }, 500)
+        this.listLoading = false
       })
     },
     // 添加

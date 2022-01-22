@@ -73,7 +73,7 @@ export default {
             picker.$emit('pick', [start, end]);
           }
         }]
-      },
+      }
     }
   },
   created() {
