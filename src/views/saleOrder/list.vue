@@ -3,22 +3,25 @@
     <!-- 筛选查询 -->
     <div class="header">
       <el-form :inline="true" :model="searchForm" class="demo-form-inline">
-        <el-form-item label="时间范围">
+        <el-form-item label="时间范围:">
           <el-date-picker v-model="searchForm.date" value-format="yyyy-MM-dd HH:mm:ss" :default-time="['00:00:00', '23:59:59']" type="datetimerange" :picker-options="pickerOptions" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right" @change="datetimeChange"></el-date-picker>
         </el-form-item>
-        <el-form-item label="销售员">
+        <el-form-item label="客户名称:">
+          <el-input v-model="searchForm.customerName" clearable placeholder="客户名称"></el-input>
+        </el-form-item>
+        <el-form-item label="销售员:">
           <el-input v-model="searchForm.salePerson" clearable placeholder="销售员"></el-input>
         </el-form-item>
-        <el-form-item label="产品">
-          <el-input v-model="searchForm.productName" clearable placeholder="产品"></el-input>
+        <el-form-item label="产品名称:">
+          <el-input v-model="searchForm.productName" clearable placeholder="产品名称"></el-input>
         </el-form-item>
-        <el-form-item label="部门">
+        <el-form-item label="部门:">
           <el-input v-model="searchForm.saleDepartment" clearable placeholder="部门"></el-input>
         </el-form-item>
-        <el-form-item label="联系方式">
+        <el-form-item label="联系方式:">
           <el-input v-model="searchForm.payContactInfo" clearable placeholder="联系方式"></el-input>
         </el-form-item>
-        <el-form-item label="是否开票">
+        <el-form-item label="是否开票:">
           <el-select v-model="searchForm.isInvoice" placeholder="请选择">
             <el-option label="全部" value=""></el-option>
             <el-option label="已开票" :value="1"></el-option>
@@ -30,8 +33,8 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="el-icon-plus" @click="creatItem">添加销售记录</el-button>
-          <el-button type="primary" icon="el-icon-download" @click="exportExcel">导出EXCEL</el-button>
-          <el-button type="primary" icon="el-icon-download" @click="exportExcelAll">导出全部数据</el-button>
+          <el-button plain icon="el-icon-download" @click="exportExcel">导出EXCEL</el-button>
+          <el-button plain icon="el-icon-download" @click="exportExcelAll">导出全部数据</el-button>
           <!-- <el-button type="success" icon="el-icon-upload" @click="uploadDialogShow = true">导入EXCEL</el-button> -->
         </el-form-item>
       </el-form>
@@ -285,6 +288,7 @@ export default {
         date: '',
         startTime: '',
         endTime: '',
+        customerName: '',
         salePerson: '',
         productName: '',
         saleDepartment: '',
