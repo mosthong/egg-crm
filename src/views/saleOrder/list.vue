@@ -31,20 +31,21 @@
         <el-form-item>
           <el-button type="primary" @click="search">查 询</el-button>
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="el-icon-plus" @click="creatItem">添加销售记录</el-button>
-          <el-button plain icon="el-icon-download" @click="exportExcel">导出EXCEL</el-button>
-          <el-button plain icon="el-icon-download" @click="exportExcelAll">导出全部数据</el-button>
-          <!-- <el-button type="success" icon="el-icon-upload" @click="uploadDialogShow = true">导入EXCEL</el-button> -->
-        </el-form-item>
       </el-form>
+      <!-- 快捷菜单 -->
+      <div class="shortcut-menu">
+        <el-button type="primary" icon="el-icon-plus" @click="creatItem">添加销售记录</el-button>
+        <!-- <el-button type="success" icon="el-icon-upload" @click="uploadDialogShow = true">导入EXCEL</el-button> -->
+        <el-button plain icon="el-icon-download" @click="exportExcel">导出EXCEL</el-button>
+        <el-button plain icon="el-icon-download" @click="exportExcelAll">导出全部数据</el-button>
+      </div>
     </div>
     <!-- 列表 -->
     <el-card class="box-card">
       <div class="footer">
         <el-pagination background :current-page="searchForm.pageNum" :page-sizes="[10, 50, 100, 200, 300, total]" :page-size="searchForm.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
       </div>
-      <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" stripe fit show-summary highlight-current-row>
+      <el-table v-loading="listLoading" :data="list" element-loading-text="Loading" stripe border fit show-summary highlight-current-row>
         <el-table-column label="编号" prop="id" width="100"></el-table-column>
         <el-table-column label="客户名称" prop="customerName" sortable width="160"></el-table-column>
         <el-table-column label="客户编号" sortable width="120">
@@ -621,10 +622,7 @@ export default {
           header: tHeader, // 表头 必填
           data, // 具体数据 必填
           filename:
-            'sales-data-forOrder-count' +
-            that.searchForm.pageSize +
-            '-time' +
-            new Date().getTime(), // 文件名
+            '销售数据(' + this.searchForm.startTime + '到' + this.searchForm.endTime + ')-第' +  + this.searchForm.pageNum + '页', // 文件名
           autoWidth: true, // 是否数据宽度自适应
           bookType: 'xlsx' // 文件格式
         })
@@ -685,7 +683,7 @@ export default {
             header: tHeader, // 表头 必填
             data, // 具体数据 必填
             filename:
-              'sales-data-forOrder-all' + '-time' + new Date().getTime(), // 文件名
+              '销售数据(' + this.searchForm.startTime + '到' + this.searchForm.endTime + ')', // 文件名
             autoWidth: true, // 是否数据宽度自适应
             bookType: 'xlsx' // 文件格式
           })
@@ -820,5 +818,8 @@ export default {
   margin: 20px;
   display: flex;
   justify-content: flex-end;
+}
+.shortcut-menu {
+  margin-bottom: 10px;
 }
 </style>
