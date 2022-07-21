@@ -35,9 +35,9 @@
       <!-- 快捷菜单 -->
       <div class="shortcut-menu">
         <el-button type="primary" icon="el-icon-plus" @click="creatItem">添加销售记录</el-button>
-        <!-- <el-button type="success" icon="el-icon-upload" @click="uploadDialogShow = true">导入EXCEL</el-button> -->
-        <el-button plain icon="el-icon-download" @click="exportExcel">导出EXCEL</el-button>
-        <el-button plain icon="el-icon-download" @click="exportExcelAll">导出全部数据</el-button>
+        <el-button type="success" icon="el-icon-upload" @click="uploadDialogShow = true">导入EXCEL</el-button>
+        <el-button type="success" icon="el-icon-download" @click="exportExcel">导出EXCEL</el-button>
+        <el-button type="success" icon="el-icon-download" @click="exportExcelAll">导出全部数据</el-button>
       </div>
     </div>
     <!-- 列表 -->
@@ -56,7 +56,7 @@
         <el-table-column prop="productName" label="产品名称" width="280" sortable>
           <template slot-scope="scope">
             <div v-for="(item, index) in scope.row.productArr" :key="index" class="product-item">
-              <el-tag>{{ item }}</el-tag>
+              <el-tag size="mini">{{ item }}</el-tag>
             </div>
           </template>
         </el-table-column>
@@ -68,9 +68,9 @@
         <el-table-column prop="payTime" label="收款时间" sortable width="130"></el-table-column>
         <el-table-column prop="userInfo.username" label="销售" sortable width="130"></el-table-column>
         <el-table-column prop="saleDepartment" label="部门" sortable width="130"></el-table-column>
-        <el-table-column prop="transactionPrice" label="成交价格(元)" sortable width="130"></el-table-column>
-        <el-table-column prop="transactionPriceForeign" label="成交价格(外币)" sortable width="140"></el-table-column>
-        <el-table-column prop="transactionCount" label="数量" width="140"></el-table-column>
+        <el-table-column prop="transactionPrice" label="成交价格(元)" align="right" sortable width="130"></el-table-column>
+        <el-table-column prop="transactionPriceForeign" label="成交价格(外币)" align="right" sortable width="140"></el-table-column>
+        <el-table-column prop="transactionCount" label="数量" align="center" width="140"></el-table-column>
         <el-table-column label="打款人信息" width="140">
           <template slot-scope="scope">
             {{ scope.row.payName }}
@@ -104,6 +104,7 @@
         <el-pagination background :current-page="searchForm.pageNum" :page-sizes="[10, 50, 100, 200, 300, total]" :page-size="searchForm.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
       </div>
     </el-card>
+
     <!-- 表单 -->
     <el-dialog :title="formType == 'creat' ? '添加' : '编辑'" :visible.sync="formShow">
       <el-form ref="creatForm" :model="form" :rules="rules" label-position="top" label-width="160">
@@ -160,12 +161,12 @@
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="24" :md="12" :lg="12">
-            <el-form-item label="打款人">
+            <el-form-item label="联系人" prop="payName">
               <el-input v-model="form.payName" placeholder="请输入" />
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="24" :md="12" :lg="12">
-            <el-form-item label="联系方式">
+            <el-form-item label="联系方式" prop="payContactInfo">
               <el-input v-model="form.payContactInfo" placeholder="请输入" />
             </el-form-item>
           </el-col>
@@ -204,15 +205,15 @@
           <div class="grid-content bg-purple">
             <h3>1. 请按照数据模板的格式准备要导入的数据。<el-link href="/customerManagement/salesmodule.xlsx" type="primary" target="_blank" :underline="false" style="font-size: 1.1em;">点击下载(销售数据模板)</el-link>
             </h3>
-            <p>导入文件请勿超过1MB（约4,000条数据）。</p>
+            <p>导入文件请勿超过3MB（约4,000条数据）。</p>
           </div>
           <div class="grid-content bg-purple">
-            <h3>2. 收款时间格式必须为时间格式。</h3>
-            <p>例：2020-02-02格式。</p>
+            <h3>2. 收款时间格式必须为文本格式。</h3>
+            <p>例：2020-02-02</p>
           </div>
           <div class="grid-content bg-purple">
             <h3>3. 成交价格和外币价格后面不可跟元或者英镑之类的字符，只能是数字。</h3>
-            <p>例：1999</p>
+            <p>例：1999.01</p>
           </div>
           <div class="grid-content bg-purple">
             <h3>4. 支付方式只能对公支付或者对私支付。</h3>
@@ -226,45 +227,13 @@
         <el-button @click="uploadDialogShow = false">取 消</el-button>
         <el-button type="primary" @click="comfirmUploadExcel">立即导入</el-button>
       </div>
-      <el-table :data="tableData" element-loading-text="Loading" border fit highlight-current-row>
-        <el-table-column label="序号" type="index" align="center" width="60" />
-        <el-table-column label="客户名称" prop="customerName" width="240" align="center"></el-table-column>
-        <el-table-column label="客户编号" prop="customerCode" width="120" align="center"></el-table-column>
-        <el-table-column label="产品名称" prop="productName" width="120" align="center"></el-table-column>
-        <el-table-column label="国家" prop="country" width="120" align="center"></el-table-column>
-        <el-table-column label="收款时间" prop="payTime" width="160" align="center"></el-table-column>
-        <el-table-column label="销售员" prop="salePerson" width="100" align="center"></el-table-column>
-        <el-table-column label="部门" prop="saleDepartment" width="100" align="center"></el-table-column>
-        <el-table-column label="成交价格(元)" width="120" align="center">
-          <template slot-scope="scope">
-            {{ parseFloat((scope.row.transactionPrice / 100).toFixed(2)) }}
-          </template>
-        </el-table-column>
-        <el-table-column label="成交价格(外币)" width="120" align="center">
-          <template slot-scope="scope">
-            {{ parseFloat((scope.row.transactionPriceForeign / 100).toFixed(2)) }}
-          </template>
-        </el-table-column>
-        <el-table-column label="打款人" prop="payName" width="120" align="center"></el-table-column>
-        <el-table-column label="联系方式" prop="payContactInfo" width="120" align="center"></el-table-column>
-        <el-table-column label="收款方式" width="100" align="center">
-          <template slot-scope="scope">
-            {{ scope.row.payMethods == 1 ? '对公支付' : '对私支付' }}
-          </template>
-        </el-table-column>
-        <el-table-column label="是否开票" width="120" align="center">
-          <template slot-scope="scope">
-            {{ scope.row.isInvoice == 2 ? '否' : '是' }}
-          </template>
-        </el-table-column>
-        <el-table-column label="备注" prop="remark" align="center"></el-table-column>
-      </el-table>
     </el-dialog>
   </div>
 </template>
 
 <script>
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
+
 import {
   getProductList,
   getCountrylist,
@@ -367,7 +336,9 @@ export default {
         productName: [{ required: true, message: '请填写', trigger: 'blur' }],
         customerName: [{ required: true, message: '请填写', trigger: 'blur' }],
         customerCode: [{ required: true, message: '请填写', trigger: 'blur' }],
-        salePerson: [{ required: true, message: '请填写', trigger: 'blur' }]
+        salePerson: [{ required: true, message: '请填写', trigger: 'blur' }],
+        payName: [{ required: true, message: '请填写', trigger: 'blur' }],
+        payContactInfo: [{ required: true, message: '请填写', trigger: 'blur' }]
       },
       uploadDialogShow: false,
       tableData: [],
@@ -378,12 +349,7 @@ export default {
     }
   },
   created() {
-    // 获取当前时间
-    this.searchForm.endTime = parseTime(new Date(), '{y}-{m}-{d} {h}:{i}:{s}')
-    this.searchForm.startTime = parseTime(new Date(), '{y}-{m}') + '-01 00:00:00'
-    this.searchForm.date = [this.searchForm.startTime, this.searchForm.endTime]
-
-    this.getList()
+    this.search()
     // 预加载
     this.getProductList()
   },
@@ -547,6 +513,10 @@ export default {
     },
     // 头部 - 搜索
     search() {
+      // 获取当前时间
+      this.searchForm.endTime = parseTime(new Date(), '{y}-{m}-{d} {h}:{i}:{s}')
+      this.searchForm.startTime = parseTime(new Date(), '{y}-{m}') + '-01 00:00:00'
+      this.searchForm.date = [this.searchForm.startTime, this.searchForm.endTime]
       this.searchForm.pageNum = 1
       this.getList()
     },
@@ -611,10 +581,10 @@ export default {
           '销售部门',
           '成交价格(元)',
           '成交价格(外币)',
-          '打款人信息',
+          '联系人',
           '联系方式',
-          '收款方式: 1公对公,2对私',
-          '开票:1是，2否',
+          '收款方式',
+          '开票',
           '备注',
           '创建时间'
         ]
@@ -674,8 +644,8 @@ export default {
             '成交价格(外币)',
             '打款人信息',
             '联系方式',
-            '收款方式: 1公对公,2对私',
-            '开票:1是，2否',
+            '收款方式',
+            '开票',
             '备注',
             '创建时间'
           ]
@@ -696,7 +666,12 @@ export default {
     },
     // 导出excel 数据一条条进
     formatJson(filterVal, jsonData) {
-      return jsonData.map((v) => filterVal.map((j) => v[j]))
+      return jsonData.map((v) => {
+        let item = v
+        item.isInvoice = item.isInvoice === 1 ? '已开票' : '未开票'
+        item.payMethods = item.payMethods === 1 ? '对公支付' : '对私支付'
+        return filterVal.map((j) => item[j])
+      })
     },
 
     /**
@@ -717,41 +692,38 @@ export default {
     },
     // 数组拼接
     handleSuccess({ results, header }) {
+      let state = this.$store.state.user
       let dataArr = results.map((value) => {
         // 付款方式
         let payMethods = value.收款方式
         if (payMethods) {
-          payMethods.indexOf('对公') !== -1
-            ? (payMethods = 1)
-            : (payMethods = 2)
+          payMethods.indexOf('对公') !== -1 ? (payMethods = 1) : (payMethods = 2)
         }
         // 收款时间判断
-        let payTime =
-          typeof value.收款时间 === 'string'
-            ? value.收款时间
-            : this.formatExcelDate(new Date(value.收款时间), '-')
+        let payTime = typeof value.收款时间 === 'string' ? value.收款时间 : this.formatExcelDate(new Date(value.收款时间), '-')
         // 开票判断
         let isInvoice = ''
         if (value.是否开票) {
           isInvoice = value.是否开票 === '是' ? 1 : 2
         } else {
-          isInvoice = NaN
+          isInvoice = null
         }
 
         let dataItem = {
+          productName: value.产品名称,
+          customerCode: value.客户编号,
+          customerName: value.客户名称,
+          salePersonId: state.id,
+          salePerson: state.name,
+          saleDepartment: state.role_name,
+          transactionPrice: value['成交价格(元)'],
+          transactionPriceForeign: value['成交价格(外币)'],
+          transactionCount: value['数量'],
+          payTime: payTime,
+          payName: value.联系人,
+          payContactInfo: value.联系方式,
           isInvoice: isInvoice,
           payMethods: payMethods,
-          payTime: payTime,
-          payContactInfo: value.联系方式,
-          salePerson: value.对应销售,
-          saleDepartment: value.部门,
-          customerName: value.客户名称,
-          customerCode: value.客户编号,
-          productName: value.产品名称,
-          country: value.国家,
-          payName: value.打款人信息,
-          transactionPrice: value.成交价格 * 100,
-          transactionPriceForeign: value.外币价格 * 100,
           remark: value.备注
         }
         return dataItem
@@ -763,13 +735,13 @@ export default {
     comfirmUploadExcel() {
       console.log(this.tableData)
       batchAdd(this.tableData).then((res) => {
-        console.log('uploadExcel', res)
         if (res.code !== 200) {
           return this.$message.error('导入文件失败！')
         }
         this.$message.success('导入文件成功！')
         this.uploadDialogShow = false
-        this.getList()
+        
+        this.search()
       })
     },
     // excel时间格式转年月日
@@ -820,6 +792,6 @@ export default {
   justify-content: flex-end;
 }
 .shortcut-menu {
-  margin-bottom: 10px;
+  margin-bottom: 26px;
 }
 </style>
