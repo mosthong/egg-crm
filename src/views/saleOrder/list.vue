@@ -349,6 +349,11 @@ export default {
     }
   },
   created() {
+    // 获取当前时间
+    this.searchForm.endTime = parseTime(new Date(), '{y}-{m}-{d} {h}:{i}:{s}')
+    this.searchForm.startTime = parseTime(new Date(), '{y}-{m}') + '-01 00:00:00'
+    this.searchForm.date = [this.searchForm.startTime, this.searchForm.endTime]
+    
     this.search()
     // 预加载
     this.getProductList()
@@ -513,10 +518,6 @@ export default {
     },
     // 头部 - 搜索
     search() {
-      // 获取当前时间
-      this.searchForm.endTime = parseTime(new Date(), '{y}-{m}-{d} {h}:{i}:{s}')
-      this.searchForm.startTime = parseTime(new Date(), '{y}-{m}') + '-01 00:00:00'
-      this.searchForm.date = [this.searchForm.startTime, this.searchForm.endTime]
       this.searchForm.pageNum = 1
       this.getList()
     },
